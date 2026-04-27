@@ -1,0 +1,247 @@
+/* ===== Voice Runner — Noise Chaos ===== */
+:root {
+  --bg: #07070d;
+  --bg-2: #0d0d1a;
+  --neon-pink: #ff2bd6;
+  --neon-cyan: #00f0ff;
+  --neon-violet: #8a2bff;
+  --neon-yellow: #f7ff2b;
+  --text: #e8e8ff;
+  --muted: #7a7a99;
+  --danger: #ff3860;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, var(--bg-2) 0%, var(--bg) 80%);
+  color: var(--text);
+  font-family: 'Courier New', monospace;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+canvas#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(180deg, #0a0a18 0%, #11112a 60%, #1a0a22 100%);
+  image-rendering: pixelated;
+}
+
+/* ===== Overlays ===== */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(5, 5, 12, 0.92);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+.overlay.hidden { display: none; }
+
+.overlay-card {
+  max-width: 480px; width: 100%;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 14px;
+  padding: 28px 22px;
+  background: linear-gradient(180deg, rgba(0,240,255,0.05), rgba(255,43,214,0.05));
+  box-shadow:
+    0 0 24px rgba(0, 240, 255, 0.25),
+    0 0 60px rgba(255, 43, 214, 0.15) inset;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(28px, 6vw, 44px);
+  letter-spacing: 4px;
+  color: var(--neon-cyan);
+  text-shadow:
+    0 0 6px var(--neon-cyan),
+    0 0 18px var(--neon-cyan),
+    0 0 36px rgba(0,240,255,0.4);
+}
+.subtitle {
+  margin-top: 6px;
+  color: var(--neon-pink);
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px var(--neon-pink);
+  font-size: 14px;
+}
+
+.instructions {
+  list-style: none;
+  margin: 22px auto;
+  text-align: left;
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text);
+}
+.instructions li span {
+  display: inline-block;
+  min-width: 130px;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 6px rgba(247,255,43,0.5);
+}
+
+.hint {
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.neon-btn {
+  margin-top: 4px;
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--neon-cyan);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-shadow: 0 0 8px var(--neon-cyan);
+  box-shadow: 0 0 16px rgba(0,240,255,0.3), 0 0 32px rgba(0,240,255,0.15) inset;
+}
+.neon-btn:hover, .neon-btn:active {
+  background: var(--neon-cyan);
+  color: #02020a;
+  text-shadow: none;
+  box-shadow: 0 0 32px var(--neon-cyan);
+}
+
+/* ===== Glitch text ===== */
+.glitch { position: relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0; width: 100%;
+  overflow: hidden;
+}
+.glitch::before {
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px var(--neon-pink);
+  animation: glitch-1 2.5s infinite linear alternate-reverse;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+.glitch::after {
+  color: var(--neon-violet);
+  text-shadow: 0 0 8px var(--neon-violet);
+  animation: glitch-2 3s infinite linear alternate-reverse;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+@keyframes glitch-1 {
+  0%   { transform: translate(0,0); }
+  20%  { transform: translate(-2px, 1px); }
+  40%  { transform: translate(2px, -1px); }
+  60%  { transform: translate(-1px, 2px); }
+  100% { transform: translate(0,0); }
+}
+@keyframes glitch-2 {
+  0%   { transform: translate(0,0); }
+  25%  { transform: translate(2px, -2px); }
+  50%  { transform: translate(-2px, 1px); }
+  75%  { transform: translate(1px, 2px); }
+  100% { transform: translate(0,0); }
+}
+
+/* ===== HUD ===== */
+#hud {
+  position: fixed;
+  top: 12px; left: 12px; right: 12px;
+  z-index: 10;
+  display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none;
+}
+.hud-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.meter {
+  flex: 1;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; letter-spacing: 2px;
+  color: var(--muted);
+  max-width: 240px;
+}
+.meter label {
+  min-width: 48px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 6px var(--neon-cyan);
+}
+.bar {
+  flex: 1;
+  height: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(0,240,255,0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,240,255,0.15) inset;
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.08s linear;
+  border-radius: 6px;
+}
+.bar-fill.mic {
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+  box-shadow: 0 0 10px var(--neon-pink);
+}
+.bar-fill.energy {
+  background: linear-gradient(90deg, var(--neon-yellow), var(--neon-pink));
+  box-shadow: 0 0 10px var(--neon-yellow);
+}
+
+#scoreDisplay {
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 8px var(--neon-yellow);
+}
+.voice-tag {
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--neon-pink);
+  color: var(--neon-pink);
+  text-shadow: 0 0 6px var(--neon-pink);
+  background: rgba(255,43,214,0.08);
+  min-width: 80px; text-align: center;
+}
+.voice-tag.active {
+  background: var(--neon-pink);
+  color: #02020a;
+  text-shadow: none;
+  box-shadow: 0 0 18px var(--neon-pink);
+}
+
+/* ===== Screen shake & glitch effects ===== */
+@keyframes shake {
+  0%, 100% { transform: translate(0,0); }
+  20% { transform: translate(-6px, 3px); }
+  40% { transform: translate(5px, -4px); }
+  60% { transform: translate(-3px, 5px); }
+  80% { transform: translate(4px, -2px); }
+}
+.shake { animation: shake 0.35s cubic-bezier(.36,.07,.19,.97) both; }
+
+.glitch-effect canvas#game {
+  filter: hue-rotate(90deg) contrast(1.4) saturate(1.6);
+}
+.invert-effect canvas#game {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  .meter { max-width: 50%; }
+  #scoreDisplay { font-size: 13px; }
+  .voice-tag { font-size: 10px; }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Voice Runner — Noise Chaos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Start / Permission Overlay -->
+  <div id="startScreen" class="overlay">
+    <div class="overlay-card">
+      <h1 class="title glitch" data-text="VOICE RUNNER">VOICE RUNNER</h1>
+      <p class="subtitle">// NOISE CHAOS //</p>
+      <ul class="instructions">
+        <li><span>🎤 Loud voice</span> → Jump</li>
+        <li><span>📢 Very loud</span> → Speed boost</li>
+        <li><span>🔉 Soft voice</span> → Slow motion</li>
+        <li><span>🗣️ Say "jump" / "go" / "stop"</span> → Actions</li>
+        <li><span>⌨️ Space / Shift / S</span> → Fallback</li>
+        <li><span>📱 Tap / Hold / Swipe →</span> → Mobile</li>
+      </ul>
+      <button id="startBtn" class="neon-btn">START GAME</button>
+      <p class="hint">Allow microphone access for voice control.<br/>Music plays after you press start.</p>
+    </div>
+  </div>
+
+  <!-- Game Over -->
+  <div id="gameOverScreen" class="overlay hidden">
+    <div class="overlay-card">
+      <h1 class="title glitch" data-text="GAME OVER">GAME OVER</h1>
+      <p class="subtitle">Score: <span id="finalScore">0</span></p>
+      <p class="subtitle">Best: <span id="bestScore">0</span></p>
+      <button id="restartBtn" class="neon-btn">RESTART</button>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-row">
+      <div class="meter">
+        <label>MIC</label>
+        <div class="bar"><div id="micBar" class="bar-fill mic"></div></div>
+      </div>
+      <div class="meter">
+        <label>ENERGY</label>
+        <div class="bar"><div id="energyBar" class="bar-fill energy"></div></div>
+      </div>
+    </div>
+    <div class="hud-row">
+      <div id="scoreDisplay">SCORE 0</div>
+      <div id="voiceTag" class="voice-tag">—</div>
+    </div>
+  </div>
+
+  <!-- Game Canvas -->
+  <canvas id="game"></canvas>
+
+  <!-- Background Music -->
+  <audio id="bgm" src="assets/bg.mp3" loop></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
